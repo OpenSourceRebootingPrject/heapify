@@ -10,13 +10,13 @@ const NUMBER_OF_KEYS = 1000000;
 const BATCH_SIZE = 1000;
 const BENCH_RUN_COUNT = 5;
 
-const indexes = [];
-const data = [];
+const keys = [];
+const priorities = [];
 const dataObjs = [];
 for (let i = 0; i < NUMBER_OF_KEYS; i++) {
     const value = Math.floor(100 * Math.random());
-    data.push(value);
-    indexes.push(i + 1);
+    priorities.push(value);
+    keys.push(i + 1);
     dataObjs.push({value});
 }
 
@@ -38,12 +38,16 @@ function consolidate(benchs) {
     }
 }
 
+const heapifyNoKeyUpdates = { keys, priorities, capacity: NUMBER_OF_KEYS, wantsKeyUpdates: false };
+const heapifyWithKeyUpdates = { keys, priorities, capacity: NUMBER_OF_KEYS, wantsKeyUpdates: true };
+
 const benchs = [
-    new ClosureBenchmark(indexes, data, NUMBER_OF_KEYS, BATCH_SIZE),
-    new FastPriorityQueueBenchmark(indexes, data, NUMBER_OF_KEYS, BATCH_SIZE),
-    new FlatQueueBenchmark(indexes, data, NUMBER_OF_KEYS, BATCH_SIZE),
-    new TinyQueueBenchmark(indexes, dataObjs, NUMBER_OF_KEYS, BATCH_SIZE),
-    new HeapifyBenchmark(indexes, data, NUMBER_OF_KEYS, BATCH_SIZE),
+    new ClosureBenchmark(keys, priorities, NUMBER_OF_KEYS, BATCH_SIZE),
+    new FastPriorityQueueBenchmark(keys, priorities, NUMBER_OF_KEYS, BATCH_SIZE),
+    new FlatQueueBenchmark(keys, priorities, NUMBER_OF_KEYS, BATCH_SIZE),
+    new TinyQueueBenchmark(keys, dataObjs, NUMBER_OF_KEYS, BATCH_SIZE),
+    new HeapifyBenchmark(heapifyNoKeyUpdates, keys, priorities, NUMBER_OF_KEYS, BATCH_SIZE),
+    new HeapifyBenchmark(heapifyWithKeyUpdates, keys, priorities, NUMBER_OF_KEYS, BATCH_SIZE),
 ];
 
 for (const bench of benchs) {

@@ -5,18 +5,19 @@ import Heapify from "../heapify.mjs";
 
 export default class HeapifyBenchmark extends Benchmark {
 
-    constructor(...args) {
-        super("Heapify", ...args);
+    constructor(options, ...args) {
+        super(`Heapify${options.wantsKeyUpdates ? "+" : ""}`, ...args);
+        this.options = options;
         this.reset();
     }
 
     reset() {
-        this.q = new Heapify(this.numberOfKeys);
+        this.q = new Heapify(this.options);
     }
 
-    buildTest(indexes, data) {
+    buildTest() {
         // eslint-disable-next-line no-new
-        new Heapify(this.numberOfKeys, indexes, data);
+        new Heapify(this.options);
     }
 
     pushTest(data) {
